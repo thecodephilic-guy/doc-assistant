@@ -4,7 +4,7 @@ import Dashboard from "@/components/dashboard/dashboard";
 
 export default function Home() {
   return (
-    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden">
+    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-white dark:bg-slate-950">
       <SignedOut>
         <HomeView />
       </SignedOut>

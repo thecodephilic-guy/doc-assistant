@@ -17,14 +17,14 @@ function HomeView() {
             Now with Gemini 1.5 Flash
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1]">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1]">
             Chat with your <br />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-rose-500 to-orange-500">
               PDF Documents
             </span>
           </h1>
 
-          <p className="text-lg text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
+          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-lg mx-auto lg:mx-0">
             Stop scrolling through endless pages. Upload your documents and get
             instant answers, summaries, and insights powered by AI.
           </p>

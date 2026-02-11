@@ -3,67 +3,96 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { ChatSidebar } from "./chat-sidebar";
-import { ChatArea } from "./chat-area";
-import { ChatPlaceholder } from "./chat-placeholder"; // Import the new component
+import { Icons } from "@/components/common/icons";
+import { ChatSidebar } from "./chat/chat-sidebar";
+import { ChatArea } from "./chat/chat-area";
+import { ChatPlaceholder } from "./chat/chat-placeholder";
+import { UploadModal } from "./upload-modal";
+import { useChats } from "@/lib/hooks/use-chats";
+import type { Document } from "@/lib/types";
 
 function Dashboard() {
-  // STATE: null = No chat selected (Show Placeholder). string = Chat ID (Show ChatArea)
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const { createChat } = useChats();
 
-  // Handler for creating a new chat (Upload)
-  const handleUploadNew = () => {
-    // In real app: Open upload modal -> wait for upload -> set ID
-    console.log("Opening upload dialog...");
-    setSelectedChatId("new-session-id"); // Mock: Switch to chat immediately
+  // Handler for selecting a document (creates a new chat session)
+  const handleSelectDocument = async (document: Document) => {
+    try {
+      const chat = await createChat(document.id);
+      setSelectedChatId(chat.id);
+    } catch (error) {
+      console.error("Failed to create chat:", error);
+    }
   };
 
   // Handler for selecting an existing chat
   const handleSelectChat = (id: string) => {
     setSelectedChatId(id);
-    setIsMobileNavOpen(false); // Close mobile menu if open
+    setIsMobileNavOpen(false);
+  };
+
+  // Handler for new chat button
+  const handleNewChat = () => {
+    setSelectedChatId(null);
+    setIsMobileNavOpen(false);
   };
 
   return (
-    <div className="flex h-[calc(100vh-80px)] w-full bg-slate-50">
-      
-      {/* DESKTOP SIDEBAR */}
-      <aside className="hidden lg:block w-80 border-r border-slate-200 h-full bg-slate-50/50">
-        <ChatSidebar onSelectChat={handleSelectChat} selectedId={selectedChatId} />
-      </aside>
-
-      {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col h-full relative overflow-hidden transition-all">
+    <>
+      <div className="flex h-[calc(100vh-70px)] w-full bg-slate-50 dark:bg-slate-900/50">
         
-        {/* MOBILE HEADER */}
-        <div className="lg:hidden flex items-center p-4 border-b border-slate-200 bg-white">
-            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-                <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="-ml-2">
-                        <Menu className="w-6 h-6 text-slate-600" />
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-80">
-                    <ChatSidebar onSelectChat={handleSelectChat} selectedId={selectedChatId} />
-                </SheetContent>
-            </Sheet>
-            <span className="font-semibold ml-2 text-slate-800">Doc Assistant</span>
-        </div>
+        {/* DESKTOP SIDEBAR */}
+        <aside className="hidden lg:block w-80 border-r border-slate-200 dark:border-slate-800 h-full bg-slate-50/50 dark:bg-slate-900/50">
+          <ChatSidebar 
+            onSelectChat={handleSelectChat} 
+            selectedId={selectedChatId}
+            onNewChat={handleNewChat}
+          />
+        </aside>
 
-        {/* LOGIC: Show Placeholder OR Chat Area */}
-        {selectedChatId ? (
-            <ChatArea />
-        ) : (
-            <ChatPlaceholder 
-                onUpload={handleUploadNew} 
-                onSelect={handleSelectChat} 
-            />
-        )}
-        
-      </main>
-    </div>
+        {/* MAIN CONTENT */}
+        <main className="flex-1 flex flex-col h-full relative overflow-hidden transition-all">
+          
+          {/* MOBILE HEADER */}
+          <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+              <div className="flex items-center gap-2">
+                  <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+                      <SheetTrigger asChild>
+                          <Button variant="ghost" size="icon" className="-ml-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                              <Icons.menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+                          </Button>
+                      </SheetTrigger>
+                      <SheetContent side="left" className="p-0 w-80 border-r border-slate-200 dark:border-slate-800">
+                          <ChatSidebar 
+                            onSelectChat={handleSelectChat} 
+                            selectedId={selectedChatId}
+                            onNewChat={handleNewChat}
+                          />
+                      </SheetContent>
+                  </Sheet>
+                  <span className="font-semibold text-slate-800 dark:text-white">Doc Assistant</span>
+              </div>
+          </div>
+
+          {/* LOGIC: Show Placeholder OR Chat Area */}
+          {selectedChatId ? (
+              <ChatArea chatId={selectedChatId} />
+          ) : (
+              <ChatPlaceholder onSelectDocument={handleSelectDocument} />
+          )}
+          
+        </main>
+      </div>
+
+      {/* Upload Modal (can be triggered from anywhere) */}
+      <UploadModal
+        open={uploadModalOpen}
+        onOpenChange={setUploadModalOpen}
+        onSuccess={handleSelectDocument}
+      />
+    </>
   );
 }
 

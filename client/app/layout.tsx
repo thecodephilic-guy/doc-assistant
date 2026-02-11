@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/header/header";
+import { ThemeProvider } from "@/components/common/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,16 +33,23 @@ export default function RootLayout({
         layout: { socialButtonsVariant: "iconButton", logoPlacement: "none" },
       }}
     >
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col text-slate-900 bg-white`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors`}
         >
-          {/* Background Mesh */}
-          <div className="fixed inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[16px_32px]" />
-    
-          <Header />
-          
-          <main className="flex-1 relative z-10">{children}</main>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange={false}
+          >
+            {/* Background Mesh - Light Mode */}
+            <div className="fixed inset-0 -z-10 h-full w-full bg-white dark:bg-slate-950 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-size-[16px_32px] transition-colors" />
+      
+            <Header />
+            
+            <main className="flex-1 relative z-10">{children}</main>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
