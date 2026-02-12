@@ -1,0 +1,26 @@
+{
+  "name": "doc-assistant-server",
+  "version": "1.0.0",
+  "description": "Server for doc assistant - a RAG based project",
+  "keywords": [
+    "node.js",
+    "RAG",
+    "DocAssistant",
+    "express.js"
+  ],
+  "license": "ISC",
+  "author": "sohail",
+  "type": "commonjs",
+  "main": "./cmd/api/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./cmd/api/index.js --env=development --port=8080",
+    "prod": "nodemon ./cmd/api/index.js --env=production --port=8000"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "multer": "^2.0.2"
+  }
+}
