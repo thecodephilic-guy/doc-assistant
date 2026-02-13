@@ -18,9 +18,15 @@
     "prod": "nodemon ./cmd/api/index.js --env=production --port=8000"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
+    "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.9"
   }
 }
