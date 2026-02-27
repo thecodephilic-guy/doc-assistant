@@ -65,12 +65,12 @@ const config = {
     // },
 
     // AI / Vector (OpenAI)
-    // ai: {
-    //     apiKey: getEnvVar(null, 'GEMINI_API_KEY'),
-    //     embeddingModel: process.env.EMBEDDING_MODEL || 'text-embedding-004',
-    //     // Gemini text-embedding-004 outputs 768 dimensions
-    //     vectorDim: parseInt(process.env.VECTOR_DIM || 768, 10)
-    // },
+    ai: {
+        apiKey: getEnvVar(null, 'GEMINI_API_KEY'),
+        embeddingModel: process.env.EMBEDDING_MODEL || 'gemini-embedding-001',
+        // Gemini text-embedding-004 outputs 768 dimensions
+        vectorDim: parseInt(process.env.VECTOR_DIM || 768, 10)
+    },
     // Helper to ensure absolute path for uploads
     uploadDir: path.join(process.cwd(), 'uploads'),
     limiter: {

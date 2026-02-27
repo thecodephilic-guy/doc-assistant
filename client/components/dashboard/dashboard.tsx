@@ -42,11 +42,11 @@ function Dashboard() {
   return (
     <>
       <div className="flex h-[calc(100vh-70px)] w-full bg-slate-50 dark:bg-slate-900/50">
-        
+
         {/* DESKTOP SIDEBAR */}
-        <aside className="hidden lg:block w-80 border-r border-slate-200 dark:border-slate-800 h-full bg-slate-50/50 dark:bg-slate-900/50">
-          <ChatSidebar 
-            onSelectChat={handleSelectChat} 
+        <aside className="hidden lg:block w-80 h-full">
+          <ChatSidebar
+            onSelectChat={handleSelectChat}
             selectedId={selectedChatId}
             onNewChat={handleNewChat}
           />
@@ -54,35 +54,35 @@ function Dashboard() {
 
         {/* MAIN CONTENT */}
         <main className="flex-1 flex flex-col h-full relative overflow-hidden transition-all">
-          
+
           {/* MOBILE HEADER */}
           <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-              <div className="flex items-center gap-2">
-                  <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-                      <SheetTrigger asChild>
-                          <Button variant="ghost" size="icon" className="-ml-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                              <Icons.menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-                          </Button>
-                      </SheetTrigger>
-                      <SheetContent side="left" className="p-0 w-80 border-r border-slate-200 dark:border-slate-800">
-                          <ChatSidebar 
-                            onSelectChat={handleSelectChat} 
-                            selectedId={selectedChatId}
-                            onNewChat={handleNewChat}
-                          />
-                      </SheetContent>
-                  </Sheet>
-                  <span className="font-semibold text-slate-800 dark:text-white">Doc Assistant</span>
-              </div>
+            <div className="flex items-center gap-2">
+              <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="-ml-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <Icons.menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-80 border-r border-slate-200 dark:border-slate-800">
+                  <ChatSidebar
+                    onSelectChat={handleSelectChat}
+                    selectedId={selectedChatId}
+                    onNewChat={handleNewChat}
+                  />
+                </SheetContent>
+              </Sheet>
+              <span className="font-semibold text-slate-800 dark:text-white">Doc Assistant</span>
+            </div>
           </div>
 
           {/* LOGIC: Show Placeholder OR Chat Area */}
           {selectedChatId ? (
-              <ChatArea chatId={selectedChatId} />
+            <ChatArea chatId={selectedChatId} />
           ) : (
-              <ChatPlaceholder onSelectDocument={handleSelectDocument} />
+            <ChatPlaceholder onSelectDocument={handleSelectDocument} />
           )}
-          
+
         </main>
       </div>
 

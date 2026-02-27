@@ -21,14 +21,14 @@ export function ChatPlaceholder({ onSelectDocument }: ChatPlaceholderProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-full p-6 bg-gradient-to-br from-slate-50 via-white to-rose-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-rose-950/10 transition-colors">
+      <div className="flex flex-col items-center justify-center h-full p-6 bg-linear-to-br from-slate-50 via-white to-rose-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-rose-950/10 transition-colors">
         <div className="max-w-2xl w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
           
           {/* Icon */}
           <div className="flex justify-center">
             <div className="relative group">
               <div className="absolute inset-0 bg-rose-500/20 dark:bg-rose-500/10 rounded-full blur-2xl group-hover:blur-3xl transition-all duration-500" />
-              <div className="relative p-6 bg-gradient-to-br from-rose-500 to-rose-600 rounded-3xl shadow-xl shadow-rose-500/20 dark:shadow-rose-500/10 group-hover:shadow-2xl group-hover:shadow-rose-500/30 dark:group-hover:shadow-rose-500/20 transition-all duration-300 group-hover:scale-110">
+              <div className="relative p-6 bg-linear-to-br from-rose-500 to-rose-600 rounded-3xl shadow-xl shadow-rose-500/20 dark:shadow-rose-500/10 group-hover:shadow-2xl group-hover:shadow-rose-500/30 dark:group-hover:shadow-rose-500/20 transition-all duration-300 group-hover:scale-110">
                 <Icons.fileText className="w-12 h-12 text-white" strokeWidth={2} />
               </div>
             </div>

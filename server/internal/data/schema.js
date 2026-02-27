@@ -16,10 +16,9 @@ const documents = pgTable(
     id: serial("id").primaryKey(),
     userId: text("userId").notNull(),
     filename: text("filename").notNull(),
-    url: text("url"),
-    // Status Enum: pending -> uploaded -> indexed (or failed)
+    originalName: text("originalName").notNull(),
+    size: integer("size").default(0).notNull(),
     status: text("status").default("pending").notNull(),
-    // For Optimistic Locking
     version: integer("version").default(1).notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
@@ -57,4 +56,41 @@ const embeddings = pgTable(
   ],
 );
 
-module.exports = { documents, embeddings };
+// 3. Chats Table
+// Stores chat sessions linked to documents
+const chats = pgTable(
+  "chats",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("userId").notNull(),
+    documentId: integer("documentId")
+      .references(() => documents.id, { onDelete: "cascade" })
+      .notNull(),
+    title: text("title").default("New Chat").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  },
+  (table) => [
+    index("chat_user_id_idx").on(table.userId)
+  ],
+);
+
+// 4. Messages Table
+// Stores individual messages within a chat
+const messages = pgTable(
+  "messages",
+  {
+    id: serial("id").primaryKey(),
+    chatId: integer("chatId")
+      .references(() => chats.id, { onDelete: "cascade" })
+      .notNull(),
+    role: text("role").notNull(), // 'user' or 'assistant'
+    content: text("content").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (table) => [
+    index("msg_chat_id_idx").on(table.chatId)
+  ],
+);
+
+module.exports = { documents, embeddings, chats, messages };

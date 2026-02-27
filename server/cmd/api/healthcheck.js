@@ -1,8 +1,8 @@
 const appConfig = require("./config");
-const { sendResponse } = require("./helpers");
+const { sendSuccessResponse } = require("./helpers");
 
 const healthcheckHandler = (req, res) => {
-  sendResponse(res, 200, {
+  sendSuccessResponse(res, 200, {
     status: "available",
     system_info: {
       environment: "development",

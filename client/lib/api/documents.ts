@@ -1,7 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
-import { apiClient } from "./client";
+import { useClerk } from "../hooks/useClerk";
 import type {
   ApiResponse,
   Document,
@@ -9,21 +8,20 @@ import type {
   UploadResponse,
 } from "../types";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
 export function useDocumentsApi() {
-  const { getToken } = useAuth();
+  const { getAuthHeader } = useClerk();
 
   const uploadDocument = async (file: File): Promise<Document> => {
-    const token = await getToken();
     const formData = new FormData();
-    formData.append("file", file);
-
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
+    formData.append("document", file);
+    const includeContentType = false;
+    
+    const headers = await getAuthHeader(includeContentType)
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}/documents/upload`,
+      `${API_BASE_URL}/v1/documents/upload`,
       {
         method: "POST",
         body: formData,
@@ -41,29 +39,43 @@ export function useDocumentsApi() {
   };
 
   const getDocuments = async (): Promise<Document[]> => {
-    const token = await getToken();
-    const data = await apiClient<ApiResponse<DocumentsResponse>>("/documents", {}, token);
+    const headers = await getAuthHeader();
+    
+    const response = await fetch(`${API_BASE_URL}/v1/documents`, { headers });
+    const data: ApiResponse<DocumentsResponse> = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error?.message || "Failed to fetch documents");
+    }
+
     return data.data?.documents || [];
   };
 
   const getDocument = async (documentId: string): Promise<Document> => {
-    const token = await getToken();
-    const data = await apiClient<ApiResponse<{ document: Document }>>(
-      `/documents/${documentId}`,
-      {},
-      token
-    );
-    if (!data.data) {
-      throw new Error("Document not found");
+    const headers = await getAuthHeader();
+
+    const response = await fetch(`${API_BASE_URL}/v1/documents/${documentId}`, { headers });
+    const data: ApiResponse<{ document: Document }> = await response.json();
+
+    if (!data.success || !data.data) {
+      throw new Error(data.error?.message || "Document not found");
     }
+
     return data.data.document;
   };
 
   const deleteDocument = async (documentId: string): Promise<void> => {
-    const token = await getToken();
-    await apiClient(`/documents/${documentId}`, {
+    const headers = await getAuthHeader();
+
+    const response = await fetch(`${API_BASE_URL}/v1/documents/${documentId}`, {
       method: "DELETE",
-    }, token);
+      headers,
+    });
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error?.message || "Failed to delete document");
+    }
   };
 
   return {

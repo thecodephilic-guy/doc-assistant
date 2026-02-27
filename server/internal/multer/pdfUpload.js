@@ -1,6 +1,5 @@
 const multer = require("multer");
 const fs = require("fs");
-const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
 const storage = multer.diskStorage({
@@ -13,7 +12,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     // Create a unique filename to prevent overwrites
-    const uniqueSuffix = uuidv4();
+    const uniqueSuffix = uuidv4();   
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });

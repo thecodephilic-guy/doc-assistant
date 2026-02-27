@@ -4,12 +4,14 @@ const routes = require("./routes");
 const config = require("./config");
 const db = require('../../internal/data/db');
 const {sql} = require('drizzle-orm');
+const { clerkMiddleware } = require('@clerk/express');
 
 const app = express();
 
 // --- Middleware ---
 app.use(express.json());
 app.use(cors());
+app.use(clerkMiddleware())
 // Serve static files (using the safe absolute path from config)
 // Access files at: http://localhost:8080/uploads/file.pdf
 app.use("/uploads", express.static(config.uploadDir));

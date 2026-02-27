@@ -65,7 +65,7 @@ export function UploadModal({ open, onOpenChange, onSuccess }: UploadModalProps)
       }, 200);
 
       const document = await upload(selectedFile);
-      
+
       clearInterval(progressInterval);
       setProgress(100);
 
@@ -111,10 +111,9 @@ export function UploadModal({ open, onOpenChange, onSuccess }: UploadModalProps)
               {...getRootProps()}
               className={`
                 border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all
-                ${
-                  isDragActive
-                    ? "border-rose-500 bg-rose-50 dark:bg-rose-950/20"
-                    : "border-slate-300 dark:border-slate-700 hover:border-rose-400 dark:hover:border-rose-600 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                ${isDragActive
+                  ? "border-rose-500 bg-rose-50 dark:bg-rose-950/20"
+                  : "border-slate-300 dark:border-slate-700 hover:border-rose-400 dark:hover:border-rose-600 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }
               `}
             >

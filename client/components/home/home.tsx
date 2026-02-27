@@ -1,7 +1,5 @@
 import { SignUp } from "@clerk/nextjs";
 
-import React from "react";
-
 function HomeView() {
   return (
     <>
@@ -41,7 +39,6 @@ function HomeView() {
           </div>
         </div>
       </div>
-      ;
     </>
   );
 }

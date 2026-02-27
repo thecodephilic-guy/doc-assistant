@@ -1,66 +1,64 @@
-const { sendResponse } = require('./helpers');
+const { sendErrorResponse } = require("./helpers");
+const CODE500 = "INTERNAL_SERVER_ERROR";
+const CODE404 = "NOT_FOUND";
+const CODE405 = "METHOD_NOT_ALLOWED";
+const CODE400 = "BAD_REQUEST";
+const CODE422 = "VALIDATION_ERROR";
+const CODE409 = "EDIT_CONFLICT";
+const CODE429 = "RATE_LIMIT_EXCEEDED";
 
-const logError = (req, err, logger) => {
-    logger.error({
-        err: err, // In Pino/JSON logs, this captures the stack trace
-        request_method: req.method,
-        request_url: req.originalUrl 
-    }, err.message);
-};
+const errorResponse = (res, status, message, code = "error") => {
+  const envelope = {
+    code,
+    message,
+  };
 
-const errorResponse = (res, req, status, message) => {
-    const envelope = { error: message };
-
-    // In Node, writing to the response rarely fails (unlike Go), 
-    // but we wrap it in a try-catch to be strictly equivalent.
-    try {
-        sendResponse(res, status, envelope);
-    } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+  sendErrorResponse(res, status, envelope);
 };
 
 module.exports = {
-    serverErrorResponse: (res, req) => {
-        const message = 'the server encountered a problem and could not process your request';
-        errorResponse(res, req, 500, message);
-    },
+  serverErrorResponse: (res) => {
+    const message =
+      "the server encountered a problem and could not process your request";
+    errorResponse(res, 500, message, CODE500);
+  },
 
-    notFoundResponse: (res, req) => {
-        const message = 'the requested resource could not be found';
-        errorResponse(res, req, 404, message);
-    },
+  notFoundResponse: (res) => {
+    const message = "the requested resource could not be found";
+    errorResponse(res, 404, message, CODE404);
+  },
 
-    methodNotAllowedResponse: (res, req) => {
-        const message = `the ${req.method} method is not supported for this resource`;
-        errorResponse(res, req, 405, message);
-    },
+  methodNotAllowedResponse: (res, req) => {
+    const message = `the ${req.method} method is not supported for this resource`;
+    errorResponse(res, 405, message, CODE405);
+  },
 
-    badRequestResponse: (res, req, err) => {
-        errorResponse(res, req, 400, err.message);
-    },
+  badRequestResponse: (res, err) => {
+    errorResponse(res, 400, err.message, CODE400);
+  },
 
-    /**
-     * Sends a 422 Unprocessable Entity response.
-     * Used for validation errors.
-     */
-    failedValidationResponse: (res, req, errors) => {
-        errorResponse(res, req, 422, errors);
-    },
+  /**
+   * Sends a 422 Unprocessable Entity response.
+   * Used for validation errors.
+   */
+  failedValidationResponse: (res, errors) => {
+    errorResponse(res, 422, errors, CODE422);
+  },
 
-    /**
-     * Sends a 409 Conflict response.
-     */
-    editConflictResponse: (res, req) => {
-        const message = 'unable to update the record due to an edit conflict, please try again';
-        errorResponse(res, req, 409, message);
-    },
+  /**
+   * Sends a 409 Conflict response.
+   */
+  editConflictResponse: (res) => {
+    const message =
+      "unable to update the record due to an edit conflict, please try again";
+    errorResponse(res, 409, message, CODE409);
+  },
 
-    /**
-     * Sends a 429 Too Many Requests response.
-     */
-    rateLimitExceededResponse: (res, req) => {
-        const message = 'rate limit exceeded';
-        errorResponse(res, req, 429, message);
-    }
-}
+  /**
+   * Sends a 429 Too Many Requests response.
+   */
+  rateLimitExceededResponse: (res) => {
+    const message = "rate limit exceeded";
+    errorResponse(res, 429, message, CODE429);
+  },
+};

@@ -1,4 +1,3 @@
-require('dotenv').config();
 const {defineConfig} = require('drizzle-kit')
 const config = require('./cmd/api/config')
 

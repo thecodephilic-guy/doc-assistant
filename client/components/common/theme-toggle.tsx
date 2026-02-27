@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { Icons } from "./icons";
 import { Button } from "../ui/button";
 
@@ -11,7 +11,9 @@ export function ThemeToggle() {
 
   // Avoid hydration mismatch
   useEffect(() => {
-    setMounted(true);
+    startTransition(() => {
+      setMounted(true);
+    })
   }, []);
 
   if (!mounted) {

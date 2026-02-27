@@ -18,15 +18,21 @@
     "prod": "nodemon ./cmd/api/index.js --env=production --port=8000"
   },
   "dependencies": {
+    "@clerk/express": "^1.7.69",
+    "@google/genai": "^1.41.0",
+    "@langchain/community": "^1.1.19",
+    "@langchain/google-genai": "^2.1.20",
+    "@langchain/textsplitters": "^1.0.1",
     "@neondatabase/serverless": "^1.0.2",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
     "multer": "^2.0.2",
+    "pdf-parse": "^1.1.4",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.9"
+    "drizzle-kit": "^0.18.1"
   }
 }

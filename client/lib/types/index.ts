@@ -5,8 +5,7 @@ export interface Document {
   name: string;
   size: number;
   uploadedAt: string;
-  pageCount: number;
-  status: "processing" | "ready" | "failed";
+  status: "pending" | "ready" | "failed";
   url?: string;
 }
 
