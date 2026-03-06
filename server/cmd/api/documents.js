@@ -1,11 +1,9 @@
-const DocumentModel = require("../../internal/data/documents");
-const RagProcessor = require("../../internal/services/ragProcessor");
+const documentModel = require("../../internal/data/documents");
+const documentQueue = require('../../internal/jobs/QueueManager')
+const { StatusCodes } = require('http-status-codes')
 const path = require("path");
 const { badRequestResponse, serverErrorResponse } = require("./errors");
 const { sendSuccessResponse } = require("./helpers");
-
-const documentModel = new DocumentModel();
-const ragProcessor = new RagProcessor();
 
 /**
  * POST /v1/documents/upload
@@ -20,18 +18,25 @@ const uploadDocumentHandler = async (req, res) => {
 
     const userId = req.userId;
 
-    // 1. Create a pending document record in the database
-    const doc = await documentModel.insert(userId, {
+    const docData = {
       filename: req.file.filename,
       originalName: req.file.originalname,
       size: req.file.size,
-    });
+    };
+
+    // 1. Create a pending document record in the database
+    const doc = await documentModel.insert(userId, docData);
 
     // 2. Kick off RAG processing
     const filePath = path.resolve(req.file.path);
-    const ragResponse = await ragProcessor.process(filePath, doc.id, userId).catch((err) => {
-        console.error(`[Upload] Processing failed for doc ${doc.id}:`, err);
-    });
+    
+    await documentQueue.addDocumentJob({
+      filePath: filePath,
+      docId: doc.id,
+      userId: userId
+    })
+
+    console.log(`[Upload] Document ${doc.id} queued for background processing.`);
 
     // 3. Respond immediately with the pending document
     const response = {
@@ -42,7 +47,8 @@ const uploadDocumentHandler = async (req, res) => {
       version: doc.version,
       createdAt: doc.createdAt,
     };
-    sendSuccessResponse(res, 201, response);
+
+    sendSuccessResponse(res, StatusCodes.ACCEPTED, response);
   } catch (err) {
     console.error("[Upload] Error:", err);
     serverErrorResponse(res);
@@ -66,16 +72,10 @@ const listDocumentsHandler = async (req, res) => {
       status: doc.status === "indexed" ? "ready" : doc.status,
     }));
 
-    res.status(200).json({
-      success: true,
-      data: { documents },
-    });
+    sendSuccessResponse(res, StatusCodes.OK, documents)
   } catch (err) {
     console.error("[Documents] List error:", err);
-    res.status(500).json({
-      success: false,
-      error: { code: "SERVER_ERROR", message: "failed to fetch documents" },
-    });
+    serverErrorResponse(res)
   }
 };
 

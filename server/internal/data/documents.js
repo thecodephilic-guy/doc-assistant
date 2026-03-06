@@ -126,4 +126,6 @@ class DocumentModel {
     }
 }
 
-module.exports = DocumentModel;
+// Export a singleton object
+const documentModel = new DocumentModel()
+module.exports = documentModel;

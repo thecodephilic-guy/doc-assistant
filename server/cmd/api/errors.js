@@ -1,11 +1,5 @@
 const { sendErrorResponse } = require("./helpers");
-const CODE500 = "INTERNAL_SERVER_ERROR";
-const CODE404 = "NOT_FOUND";
-const CODE405 = "METHOD_NOT_ALLOWED";
-const CODE400 = "BAD_REQUEST";
-const CODE422 = "VALIDATION_ERROR";
-const CODE409 = "EDIT_CONFLICT";
-const CODE429 = "RATE_LIMIT_EXCEEDED";
+const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 
 const errorResponse = (res, status, message, code = "error") => {
   const envelope = {
@@ -20,21 +14,21 @@ module.exports = {
   serverErrorResponse: (res) => {
     const message =
       "the server encountered a problem and could not process your request";
-    errorResponse(res, 500, message, CODE500);
+    errorResponse(res, StatusCodes.INTERNAL_SERVER_ERROR, message, ReasonPhrases.INTERNAL_SERVER_ERROR);
   },
 
   notFoundResponse: (res) => {
     const message = "the requested resource could not be found";
-    errorResponse(res, 404, message, CODE404);
+    errorResponse(res, StatusCodes.NOT_FOUND, message, ReasonPhrases.NOT_FOUND);
   },
 
   methodNotAllowedResponse: (res, req) => {
     const message = `the ${req.method} method is not supported for this resource`;
-    errorResponse(res, 405, message, CODE405);
+    errorResponse(res, StatusCodes.METHOD_NOT_ALLOWED, message, ReasonPhrases.METHOD_NOT_ALLOWED);
   },
 
   badRequestResponse: (res, err) => {
-    errorResponse(res, 400, err.message, CODE400);
+    errorResponse(res, StatusCodes.BAD_REQUEST, err.message, ReasonPhrases.BAD_REQUEST);
   },
 
   /**
@@ -42,7 +36,7 @@ module.exports = {
    * Used for validation errors.
    */
   failedValidationResponse: (res, errors) => {
-    errorResponse(res, 422, errors, CODE422);
+    errorResponse(res, StatusCodes.UNPROCESSABLE_ENTITY, errors, ReasonPhrases.UNPROCESSABLE_ENTITY);
   },
 
   /**
@@ -51,7 +45,7 @@ module.exports = {
   editConflictResponse: (res) => {
     const message =
       "unable to update the record due to an edit conflict, please try again";
-    errorResponse(res, 409, message, CODE409);
+    errorResponse(res, StatusCodes.CONFLICT, message, ReasonPhrases.CONFLICT);
   },
 
   /**
@@ -59,6 +53,6 @@ module.exports = {
    */
   rateLimitExceededResponse: (res) => {
     const message = "rate limit exceeded";
-    errorResponse(res, 429, message, CODE429);
+    errorResponse(res, StatusCodes.TOO_MANY_REQUESTS, message, ReasonPhrases.TOO_MANY_REQUESTS);
   },
 };

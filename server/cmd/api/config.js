@@ -1,17 +1,12 @@
 const { parseArgs } = require('node:util');
 const path = require('path');
-require('dotenv').config(); // Load .env file if present
+require('dotenv').config();
 
 // 1. Define Defaults
 const defaults = {
     port: 8080,
     env: 'development',
     version: '1.0.0',
-    db: {
-        maxOpenConns: 25,
-        maxIdleConns: 25,
-        maxConnIdleTime: '15m'
-    },
     limiter: {
         rps: 2,
         burst: 4,
@@ -51,24 +46,19 @@ const config = {
 
     //Database (Neon/Postgres)
     db: {
-        dsn: getEnvVar(values['db-dsn'], 'DATABASE_URL'),
-        maxOpenConns: parseInt(process.env.DB_MAX_OPEN_CONNS || defaults.db.maxOpenConns, 10),
-        maxIdleConns: parseInt(process.env.DB_MAX_IDLE_CONNS || defaults.db.maxIdleConns, 10),
-        maxConnIdleTime: process.env.DB_MAX_CONN_IDLE_TIME || defaults.db.maxConnIdleTime,
+        dsn: getEnvVar(values['db-dsn'], 'DATABASE_URL')
     },
 
-    // ImageKit (File Storage)
-    // imagekit: {
-    //     publicKey: getEnvVar(null, 'IMAGEKIT_PUBLIC_KEY'),
-    //     privateKey: getEnvVar(null, 'IMAGEKIT_PRIVATE_KEY'),
-    //     urlEndpoint: getEnvVar(null, 'IMAGEKIT_URL_ENDPOINT'),
-    // },
+    //Redis (Unstash)
+    redis: {
+        url: getEnvVar(null, 'REDIS_URL'),
+    },
 
-    // AI / Vector (OpenAI)
+
+    // AI / Vector (Gemini)
     ai: {
         apiKey: getEnvVar(null, 'GEMINI_API_KEY'),
         embeddingModel: process.env.EMBEDDING_MODEL || 'gemini-embedding-001',
-        // Gemini text-embedding-004 outputs 768 dimensions
         vectorDim: parseInt(process.env.VECTOR_DIM || 768, 10)
     },
     // Helper to ensure absolute path for uploads
