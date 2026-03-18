@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/common/header";
-import { ThemeProvider } from "@/components/common/theme-provider";
-import "./globals.css";
+import { ThemeProvider } from "@/providers/theme-provider";
+import { siteConfig } from "@/config/site";
+import "../globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,16 +17,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Doc Assistant",
-  description:
-    "An intelligent document analysis platform using RAG pipelines to enable context-aware querying of PDF archives",
+  title: siteConfig.name,
+  description: siteConfig.description,
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+interface RootLayoutProps {
   children: React.ReactNode;
-}>) {
+}
+
+export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <ClerkProvider
       appearance={{
@@ -45,9 +45,9 @@ export default function RootLayout({
           >
             {/* Background Mesh - Light Mode */}
             <div className="fixed inset-0 -z-10 h-full w-full bg-white dark:bg-slate-950 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-size-[16px_32px] transition-colors" />
-      
+
             <Header />
-            
+
             <main className="flex-1 relative z-10">{children}</main>
           </ThemeProvider>
         </body>
