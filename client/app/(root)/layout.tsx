@@ -5,6 +5,7 @@ import Header from "@/components/common/header";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { siteConfig } from "@/config/site";
 import "../globals.css";
+import { ChatProvider } from "@/hooks/use-chats";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +49,9 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
 
             <Header />
 
-            <main className="flex-1 relative z-10">{children}</main>
+            <main className="flex-1 relative z-10"><ChatProvider>
+              {children}
+              </ChatProvider></main>
           </ThemeProvider>
         </body>
       </html>

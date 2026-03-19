@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useChatApi } from "../api/chat";
-import type { Message } from "../types";
+import type { Message } from "../lib/types";
+import { ChatService } from "@/services/api.chat";
 
 export function useMessages(chatId: string | null) {
-  const api = useChatApi();
   const [messages, setMessages] = useState<Message[]>([]);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +28,7 @@ export function useMessages(chatId: string | null) {
       setMessages((prev) => [...prev, userMessage]);
 
       // Send to API and get response
-      const aiMessage = await api.sendMessage(chatId, content);
+      const aiMessage = await ChatService.sendMessage(chatId, content);
       
       // Add AI response
       setMessages((prev) => [...prev, aiMessage]);

@@ -8,17 +8,17 @@ export class DocumentService {
     formData.append("document", file); 
 
     const response = await apiClient.post("/v1/documents/upload", formData);
-    return response.data.data.document;
+    return response.data.data;
   }
 
   static async getDocuments(): Promise<Document[]> {
     const response = await apiClient.get("/v1/documents");
-    return response.data.data?.documents || [];
+    return response.data.data || [];
   }
 
   static async getDocument(documentId: string): Promise<Document> {
     const response = await apiClient.get(`/v1/documents/${documentId}`);
-    return response.data.data.document;
+    return response.data.data;
   }
 
   static async deleteDocument(documentId: string): Promise<void> {

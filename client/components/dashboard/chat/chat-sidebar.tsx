@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/common/icons";
 import { cn } from "@/lib/utils";
-import { useChats } from "@/lib/hooks/use-chats";
+import { useChats } from "@/hooks/use-chats";
 
 interface ChatSidebarProps {
   className?: string;
@@ -14,14 +14,23 @@ interface ChatSidebarProps {
   onNewChat?: () => void;
 }
 
-export function ChatSidebar({ className, selectedId, onSelectChat, onNewChat }: ChatSidebarProps) {
+export function ChatSidebar({
+  className,
+  selectedId,
+  onSelectChat,
+  onNewChat,
+}: ChatSidebarProps) {
   const { chats, loading } = useChats();
 
   return (
-    <div className={cn("flex flex-col h-full bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800", className)}>
-
+    <div
+      className={cn(
+        "flex flex-col h-full bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800",
+        className,
+      )}
+    >
       {/* Header */}
-      <div className="p-4">
+      <div className="px-4 sm:p-4">
         <Button
           onClick={onNewChat}
           className="w-full bg-rose-600 hover:bg-rose-700 text-white shadow-sm gap-2 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
@@ -31,19 +40,22 @@ export function ChatSidebar({ className, selectedId, onSelectChat, onNewChat }: 
         </Button>
       </div>
 
-      <Separator className="bg-slate-200 dark:bg-slate-800" />
+      <Separator className="bg-slate-200 dark:bg-slate-800  mt-2 sm:mt-0" />
 
       {/* List */}
       <ScrollArea className="flex-1">
-        <div className="p-3 space-y-2">
-          <div className="px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        <div className="p-2 space-y-1">
+          <div className="px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:block">
             Your Sessions
           </div>
 
           {loading ? (
             // Loading skeleton
             Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="w-full px-3 py-3 rounded-lg flex items-center gap-3 animate-pulse">
+              <div
+                key={i}
+                className="w-full px-3 py-3 rounded-lg flex items-center gap-3 animate-pulse"
+              >
                 <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700" />
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
@@ -63,25 +75,36 @@ export function ChatSidebar({ className, selectedId, onSelectChat, onNewChat }: 
                 key={chat.id}
                 onClick={() => onSelectChat?.(chat.id)}
                 className={cn(
-                  "w-full text-left px-3 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 group border border-transparent",
+                  // 1. REMOVED flex. ADDED grid and grid-cols-[auto_1fr]
+                  "w-full text-left px-3 py-3 rounded-lg grid grid-cols-[auto_1fr] items-center gap-3 transition-all duration-200 group border border-transparent",
                   selectedId === chat.id
                     ? "bg-white dark:bg-slate-800 shadow-sm border-slate-100 dark:border-slate-700 ring-1 ring-slate-200/50 dark:ring-slate-700/50 scale-[1.02]"
-                    : "hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm hover:border-slate-100 dark:hover:border-slate-700 hover:scale-[1.01]"
+                    : "hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm hover:border-slate-100 dark:hover:border-slate-700 hover:scale-[1.01]",
                 )}
               >
-                <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200",
-                  selectedId === chat.id
-                    ? "bg-rose-600 text-white"
-                    : "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white group-hover:scale-110"
-                )}>
+                {/* Column 1: The Icon (takes up exactly auto/content space) */}
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200",
+                    selectedId === chat.id
+                      ? "bg-rose-600 text-white"
+                      : "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white group-hover:scale-110",
+                  )}
+                >
                   <Icons.messageSquare className="w-4 h-4" />
                 </div>
-                <div className="flex-1 overflow-hidden">
-                  <p className={cn(
-                    "text-sm font-medium truncate transition-colors duration-200",
-                    selectedId === chat.id ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white"
-                  )}>
+
+                {/* Column 2: The Text (takes up exactly 1 fraction of remaining space) */}
+                {/* min-w-0 is STILL required here so the grid column knows it can shrink to 0 */}
+                <div className="min-w-0">
+                  <p
+                    className={cn(
+                      "text-sm font-medium truncate transition-colors duration-200",
+                      selectedId === chat.id
+                        ? "text-slate-900 dark:text-white"
+                        : "text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white",
+                    )}
+                  >
                     {chat.documentName}
                   </p>
                   <p className="text-xs text-slate-400 dark:text-slate-500 truncate">

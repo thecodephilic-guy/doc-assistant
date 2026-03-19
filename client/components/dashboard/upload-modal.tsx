@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Icons } from "@/components/common/icons";
-import { useDocuments } from "@/lib/hooks/use-documents";
+import { useDocuments } from "@/hooks/use-documents";
 import type { Document } from "@/lib/types";
 
 interface UploadModalProps {

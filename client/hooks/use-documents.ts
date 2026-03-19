@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDocumentsApi } from "../api/documents";
-import type { Document } from "../types";
+import type { Document } from "../lib/types";
+import { DocumentService } from "@/services/api.document";
 
 export function useDocuments() {
-  const api = useDocumentsApi();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +13,8 @@ export function useDocuments() {
     try {
       setLoading(true);
       setError(null);
-      const docs = await api.getDocuments();
+      const docs = await DocumentService.getDocuments();
+      
       setDocuments(docs);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch documents");
@@ -25,13 +25,12 @@ export function useDocuments() {
 
   useEffect(() => {
     fetchDocuments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const upload = async (file: File): Promise<Document> => {
     try {
       setError(null);
-      const document = await api.uploadDocument(file);
+      const document = await DocumentService.uploadDocument(file);  
       setDocuments((prev) => [document, ...prev]);
       return document;
     } catch (err) {
@@ -44,7 +43,7 @@ export function useDocuments() {
   const remove = async (documentId: string): Promise<void> => {
     try {
       setError(null);
-      await api.deleteDocument(documentId);
+      await DocumentService.deleteDocument(documentId);
       setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Delete failed";

@@ -7,8 +7,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Icons } from "@/components/common/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUser } from "@clerk/nextjs";
-import { useChat } from "@/lib/hooks/use-chats";
-import { useMessages } from "@/lib/hooks/use-messages";
+import { useChat } from "@/hooks/use-chats";
+import { useMessages } from "@/hooks/use-messages";
 
 interface ChatAreaProps {
   chatId: string;

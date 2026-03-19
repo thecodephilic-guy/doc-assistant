@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Icons } from "@/components/common/icons";
 import { UploadModal } from "../upload-modal";
-import { useDocuments } from "@/lib/hooks/use-documents";
+import { useDocuments } from "@/hooks/use-documents";
 import type { Document } from "@/lib/types";
 
 interface ChatPlaceholderProps {
