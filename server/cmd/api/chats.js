@@ -5,7 +5,6 @@ const ChatService = require('../../internal/services/chatService');
 
 const chatModel = new ChatModel();
 const messageModel = new MessageModel();
-const documentModel = new DocumentModel();
 const chatService = new ChatService();
 
 /**
@@ -27,7 +26,7 @@ const createChatHandler = async (req, res) => {
         const docId = parseInt(documentId, 10);
 
         // Verify the document exists and belongs to the user
-        const doc = await documentModel.getById(docId, userId);
+        const doc = await DocumentModel.getById(docId, userId);
         if (!doc) {
             return res.status(404).json({
                 success: false,

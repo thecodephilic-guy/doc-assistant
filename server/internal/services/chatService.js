@@ -6,7 +6,7 @@ const RagProcessor = require('./ragProcessor');
 class ChatService {
     constructor() {
         this.genAI = new GoogleGenAI({ apiKey: config.ai.apiKey });
-        this.documentModel = new DocumentModel();
+        this.documentModel = DocumentModel
         this.ragProcessor = new RagProcessor();
     }
 

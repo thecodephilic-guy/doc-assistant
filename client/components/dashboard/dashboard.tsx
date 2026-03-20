@@ -76,7 +76,7 @@ function Dashboard() {
             {/* MAIN CONTENT */}
             <main className="flex-1 flex flex-col h-full relative overflow-hidden transition-all">
               {/* MOBILE HEADER */}
-              <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+              <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 z-10">
                 <div className="flex items-center gap-2">
                   <Sheet
                     open={isMobileNavOpen}
@@ -111,7 +111,7 @@ function Dashboard() {
                     </SheetContent>
                   </Sheet>
                   <span className="font-semibold text-slate-800 dark:text-white">
-                    Doc Assistant
+                    ← Your Chats
                   </span>
                 </div>
               </div>

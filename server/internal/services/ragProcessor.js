@@ -12,7 +12,7 @@ class RagProcessor {
       apiKey: config.ai.apiKey,
       model: config.ai.embeddingModel,
     });
-    this.documentModel = new DocumentModel();
+    this.documentModel = DocumentModel
   }
 
   /**
@@ -69,17 +69,7 @@ class RagProcessor {
       );
       console.log(`[RAG] Document ${docId} indexed successfully ✅`);
 
-    } catch (err) {
-      console.error(`[RAG] Processing failed for document ${docId}:`, err);
-      // Mark document as failed
-      await this.documentModel.updateStatus(
-        docId,
-        userId,
-        DocumentModel.STATUS.FAILED,
-      );
-    } finally {
-      // THE CLEANUP PHASE
-      // This runs regardless of whether the try succeeded or the catch fired
+      // 6. Cleanup - delete the file iff indexed:
       try {
         // Check if the file actually exists before trying to delete it
         await fs.promises.access(filePath);
@@ -94,6 +84,14 @@ class RagProcessor {
           cleanupErr.message,
         );
       }
+    } catch (err) {
+      console.error(`[RAG] Processing failed for document ${docId}:`, err);
+      // Mark document as failed
+      await this.documentModel.updateStatus(
+        docId,
+        userId,
+        DocumentModel.STATUS.FAILED,
+      );
     }
   }
 
