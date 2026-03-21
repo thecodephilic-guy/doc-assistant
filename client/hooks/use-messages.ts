@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { Message } from "../lib/types";
 import { ChatService } from "@/services/api.chat";
 
@@ -41,9 +41,9 @@ export function useMessages(chatId: string | null) {
     }
   };
 
-  const setInitialMessages = (initialMessages: Message[]) => {
+  const setInitialMessages = useCallback((initialMessages: Message[]) => {
     setMessages(initialMessages);
-  };
+  },[]);
 
   return {
     messages,
