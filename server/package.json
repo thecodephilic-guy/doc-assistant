@@ -15,7 +15,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./cmd/api/index.js --env=development --port=8080",
-    "prod": "nodemon ./cmd/api/index.js --env=production --port=8000"
+    "start": "node ./cmd/api/index.js",
+
+    "// --- DATABASE SCRIPTS ---": "",
+    "db:generate": "npx drizzle-kit generate",
+    "db:push": "npx drizzle-kit push",
+
+    "// --- DEPLOYMENT SCRIPTS ---": "",
+    "deploy": "npm run deploy:sync && npm run deploy:install && npm run deploy:restart",
+    
+    "deploy:sync": "rsync -rP --delete --exclude='node_modules' --exclude='.env' --exclude='.git' --exclude='uploads' ./ docassistant@YOUR_GCP_VM_IP:/var/www/doc-assistant",
+    
+    "deploy:install": "ssh -t docassistant@YOUR_GCP_VM_IP 'cd /var/www/doc-assistant && npm install --omit=dev'",
+    
+    "deploy:restart": "ssh -t docassistant@YOUR_GCP_VM_IP 'sudo systemctl restart doc-assistant'"
   },
   "dependencies": {
     "@clerk/express": "^1.7.69",
