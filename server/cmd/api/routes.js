@@ -31,13 +31,13 @@ router.get("/documents/:id", requireAuth, getDocumentHandler);
 router.delete("/documents/:id", requireAuth, deleteDocumentHandler);
 
 // Chats
-router.post("/chats", requireAuth, createChatHandler);
+router.post("/chats",requireAuth, createChatHandler);
 router.get("/chats", requireAuth, listChatsHandler);
 router.get("/chats/:id", requireAuth, getChatHandler);
 router.delete("/chats/:id", requireAuth, deleteChatHandler);
 
 // Messages
-router.post("/chats/:id/messages", requireAuth, sendMessageHandler);
+router.post("/chats/:id/messages", sendMessageHandler);
 
 //Custom not found error:
 router.use((req, res) => {

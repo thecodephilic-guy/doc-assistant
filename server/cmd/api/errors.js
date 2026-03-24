@@ -17,8 +17,7 @@ module.exports = {
     errorResponse(res, StatusCodes.INTERNAL_SERVER_ERROR, message, ReasonPhrases.INTERNAL_SERVER_ERROR);
   },
 
-  notFoundResponse: (res) => {
-    const message = "the requested resource could not be found";
+  notFoundResponse: (res, message = "the requested resource could not be found") => {
     errorResponse(res, StatusCodes.NOT_FOUND, message, ReasonPhrases.NOT_FOUND);
   },
 
