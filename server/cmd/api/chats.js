@@ -1,6 +1,6 @@
-const ChatModel = require("../../internal/data/chats");
-const MessageModel = require("../../internal/data/messages");
-const DocumentModel = require("../../internal/data/documents");
+const chatModel = require("../../internal/data/chats");
+const messageModel = require("../../internal/data/messages");
+const documentModel = require("../../internal/data/documents");
 const ChatService = require("../../internal/services/chatService");
 const Validator = require("../../internal/validators/validator");
 const { sendSuccessResponse } = require("./helpers");
@@ -12,8 +12,6 @@ const {
 } = require("./errors");
 const { Filters, calculateMetadata } = require("../../internal/data/filters");
 
-const chatModel = new ChatModel();
-const messageModel = new MessageModel();
 const chatService = new ChatService();
 
 /**
@@ -42,7 +40,7 @@ const createChatHandler = async (req, res) => {
     const docId = parseInt(documentId, 10);
 
     // Verify the document exists and belongs to the user
-    const doc = await DocumentModel.getById(docId, userId);
+    const doc = await documentModel.getById(docId, userId);
     if (!doc) {
       notFoundResponse(res, "document not found");
       return;
@@ -76,7 +74,7 @@ const createChatHandler = async (req, res) => {
  */
 const listChatsHandler = async (req, res) => {
   try {
-    const userId = "user_39SvjVBriV2rJWmc6R78VxWkQSh";
+    const userId = req.userId;
     const { page, pageSize, sort = "-updatedAt" } = req.query;
 
     const filters = new Filters(page, pageSize, sort, [
@@ -215,15 +213,20 @@ const deleteChatHandler = async (req, res) => {
  */
 const sendMessageHandler = async (req, res) => {
   try {
-    const userId = "user_39SvjVBriV2rJWmc6R78VxWkQSh";
+    const userId = req.userId;
     const chatId = parseInt(req.params.id, 10);
     const { message } = req.body;
 
     const validator = new Validator();
 
     validator.check(!Number.isNaN(chatId) && chatId > 0, "id", "must be a valid positive integer");
-    validator.check(message, "message", "message is required");
-    // validator.check(message.trim().length !== 0, "message", "must not be empty");
+    validator.check(message !== undefined && message !== null, "message", "message is required");
+    if (typeof message === 'string') {
+        validator.check(message.trim().length !== 0, "message", "must not be empty");
+        validator.check(message.length <= 4000, "message", "must not exceed 4000 characters"); 
+    } else if (message !== undefined) {
+        validator.addError("message", "must be a string");
+    }
 
     if(!validator.valid()){
       return failedValidationResponse(res, validator.errors);
@@ -232,10 +235,7 @@ const sendMessageHandler = async (req, res) => {
     // 1. Verify chat exists and belongs to user
     const chat = await chatModel.getById(chatId, userId);
     if (!chat) {
-      return res.status(404).json({
-        success: false,
-        error: { code: "NOT_FOUND", message: "chat session not found" },
-      });
+      return notFoundResponse(res, "chat session not found");
     }
 
     // 2. Store the user's message
@@ -258,23 +258,19 @@ const sendMessageHandler = async (req, res) => {
     await chatModel.touch(chatId);
 
     // 6. Return the AI message
-    res.status(200).json({
-      success: true,
-      data: {
-        message: {
-          id: String(aiMessage.id),
+    const response = {
+      message: {
+        id: String(aiMessage.id),
           role: aiMessage.role,
           content: aiMessage.content,
           timestamp: aiMessage.createdAt.toISOString(),
-        },
-      },
-    });
+      }
+    }
+
+    sendSuccessResponse(res, StatusCodes.CREATED, response);
   } catch (err) {
     console.error("[Messages] Send error:", err);
-    res.status(500).json({
-      success: false,
-      error: { code: "SERVER_ERROR", message: "failed to process message" },
-    });
+    serverErrorResponse(res);
   }
 };
 

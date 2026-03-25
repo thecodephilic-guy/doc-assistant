@@ -105,4 +105,6 @@ class ChatModel {
     }
 }
 
-module.exports = ChatModel;
+const chatModel = new ChatModel();
+
+module.exports = chatModel;

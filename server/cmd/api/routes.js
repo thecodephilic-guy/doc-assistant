@@ -37,7 +37,7 @@ router.get("/chats/:id", requireAuth, getChatHandler);
 router.delete("/chats/:id", requireAuth, deleteChatHandler);
 
 // Messages
-router.post("/chats/:id/messages", sendMessageHandler);
+router.post("/chats/:id/messages", requireAuth, sendMessageHandler);
 
 //Custom not found error:
 router.use((req, res) => {

@@ -30,4 +30,6 @@ class MessageModel {
     }
 }
 
-module.exports = MessageModel;
+const messageModel = new MessageModel();
+
+module.exports = messageModel;
