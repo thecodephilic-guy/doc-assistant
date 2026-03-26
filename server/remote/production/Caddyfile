@@ -1,0 +1,8 @@
+{
+  email sohailansari483@gmail.com
+}
+
+api.docassistant.sohail.world {
+    # Route all traffic to the Node.js port
+    reverse_proxy localhost:8000
+}
