@@ -7,11 +7,15 @@ const { sql } = require("drizzle-orm");
 const { clerkMiddleware } = require("@clerk/express");
 const documentQueue = require("../../internal/jobs/QueueManager");
 const documentWorker = require("../../internal/jobs/DocumentWorker");
+const { globalRateLimiter } = require("./middleware");
 
 const app = express();
+// Tells Express to trust the 1st proxy hop (Caddy) so req.ip is the actual user, not localhost.
+app.set("trust proxy", 1);
 
 // --- Middleware ---
 app.use(express.json());
+app.use(globalRateLimiter);
 app.use(cors());
 app.use(clerkMiddleware());
 // Serve static files (using the safe absolute path from config)
@@ -71,7 +75,6 @@ app.use("/v1", routes);
 
     process.on("SIGINT", gracefulShutdown);
     process.on("SIGTERM", gracefulShutdown);
-    
   } catch (err) {
     console.error("CRITICAL: Could not connect to database.");
     console.error(err);

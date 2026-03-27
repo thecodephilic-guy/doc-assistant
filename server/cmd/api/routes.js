@@ -1,7 +1,7 @@
 const express = require('express')
 const healthcheckHandler = require('./healthcheck');
 const upload = require('../../internal/multer/pdfUpload');
-const { requireAuth } = require('./middleware');
+const { requireAuth, uploadRateLimiter } = require('./middleware');
 const {
     uploadDocumentHandler,
     listDocumentsHandler,
@@ -25,7 +25,7 @@ router.get("/healthcheck", healthcheckHandler);
 // --- Protected Routes (require Clerk auth) ---
 
 // Documents
-router.post("/documents/upload", requireAuth, upload.single('document'), uploadDocumentHandler);
+router.post("/documents/upload", requireAuth, uploadRateLimiter, upload.single('document'), uploadDocumentHandler);
 router.get("/documents", requireAuth, listDocumentsHandler);
 router.get("/documents/:id", requireAuth, getDocumentHandler);
 router.delete("/documents/:id", requireAuth, deleteDocumentHandler);

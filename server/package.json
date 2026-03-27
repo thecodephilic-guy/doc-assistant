@@ -31,7 +31,7 @@
     "deploy:sync": "rsync -rP --delete --exclude='node_modules' --exclude='.env' --exclude='.git' --exclude='uploads' ./ docassistant-prod:/var/www/doc-assistant",
     "deploy:install": "ssh -t docassistant-prod 'cd /var/www/doc-assistant && npm install --omit=dev'",
     "deploy:restart": "ssh -t docassistant-prod 'sudo systemctl restart doc-assistant'",
-
+    
     "// --- CONFIGURE INFRASTRUCTURE ---": "",
     "configure:service": "rsync -P ./remote/production/doc-assistant.service docassistant-prod:~ && ssh -t docassistant-prod 'sudo mv ~/doc-assistant.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable doc-assistant && sudo systemctl restart doc-assistant'",
     "configure:caddy": "rsync -P ./remote/production/Caddyfile docassistant-prod:~ && ssh -t docassistant-prod 'sudo mv ~/Caddyfile /etc/caddy/ && sudo systemctl reload caddy'"
@@ -49,6 +49,7 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
     "http-status-codes": "^2.3.0",
     "ioredis": "^5.10.0",
     "multer": "^2.0.2",
