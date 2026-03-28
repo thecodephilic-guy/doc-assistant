@@ -21,7 +21,11 @@ interface UploadModalProps {
   onSuccess?: (document: Document) => void;
 }
 
-export function UploadModal({ open, onOpenChange, onSuccess }: UploadModalProps) {
+export function UploadModal({
+  open,
+  onOpenChange,
+  onSuccess,
+}: UploadModalProps) {
   const { upload } = useDocuments();
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -53,20 +57,11 @@ export function UploadModal({ open, onOpenChange, onSuccess }: UploadModalProps)
       setError(null);
       setProgress(0);
 
-      // Simulate progress (in real app, you'd track actual upload progress)
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
+      const document = await upload(selectedFile, (actualProgress) => {
+        setProgress(actualProgress);
+      });
 
-      const document = await upload(selectedFile);
-
-      clearInterval(progressInterval);
+      // Once the await resolves, the network upload is guaranteed to be 100%
       setProgress(100);
 
       // Success!
@@ -111,9 +106,10 @@ export function UploadModal({ open, onOpenChange, onSuccess }: UploadModalProps)
               {...getRootProps()}
               className={`
                 border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all
-                ${isDragActive
-                  ? "border-rose-500 bg-rose-50 dark:bg-rose-950/20"
-                  : "border-slate-300 dark:border-slate-700 hover:border-rose-400 dark:hover:border-rose-600 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                ${
+                  isDragActive
+                    ? "border-rose-500 bg-rose-50 dark:bg-rose-950/20"
+                    : "border-slate-300 dark:border-slate-700 hover:border-rose-400 dark:hover:border-rose-600 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }
               `}
             >
@@ -185,11 +181,7 @@ export function UploadModal({ open, onOpenChange, onSuccess }: UploadModalProps)
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
-            <Button
-              variant="ghost"
-              onClick={handleClose}
-              disabled={uploading}
-            >
+            <Button variant="ghost" onClick={handleClose} disabled={uploading}>
               Cancel
             </Button>
             <Button

@@ -27,16 +27,19 @@ export function useDocuments() {
     fetchDocuments();
   }, []);
 
-  const upload = async (file: File): Promise<Document> => {
+  const upload = async (file: File, onProgress?: (progress: number) => void): Promise<Document> => {
     try {
+      setLoading(true);
       setError(null);
-      const document = await DocumentService.uploadDocument(file);  
+      const document = await DocumentService.uploadDocument(file, onProgress);  
       setDocuments((prev) => [document, ...prev]);
       return document;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Upload failed";
       setError(errorMessage);
       throw new Error(errorMessage);
+    }finally{
+      setLoading(false);
     }
   };
 
