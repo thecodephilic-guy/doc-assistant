@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { PDFDocument } from "pdf-lib"
 import {
   Dialog,
   DialogContent,
@@ -56,6 +57,22 @@ export function UploadModal({
       setUploading(true);
       setError(null);
       setProgress(0);
+
+      // Check if pdf is not locked:
+      try {
+        const arrayBuffer = await selectedFile.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true}); //ignoreEncr to read the metadata without crashing
+        
+        if (pdfDoc.isEncrypted){
+          throw new Error("This document is password protected. Please unlock it before uploading.");
+        }
+      }catch (err){
+        //catch error for encrypted or currupted file:
+        if (err instanceof Error && err.message.includes("password protected")){
+          throw err;
+        }
+        throw new Error("Failed to read PDF file. It may be corrupted or in an unsupported format.");
+      }
 
       const document = await upload(selectedFile, (actualProgress) => {
         setProgress(actualProgress);
