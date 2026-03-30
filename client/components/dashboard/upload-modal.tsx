@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { PDFDocument } from "pdf-lib"
+import { PDFDocument } from "pdf-lib";
 import {
   Dialog,
   DialogContent,
@@ -61,17 +61,26 @@ export function UploadModal({
       // Check if pdf is not locked:
       try {
         const arrayBuffer = await selectedFile.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true}); //ignoreEncr to read the metadata without crashing
-        
-        if (pdfDoc.isEncrypted){
-          throw new Error("This document is password protected. Please unlock it before uploading.");
+        const pdfDoc = await PDFDocument.load(arrayBuffer, {
+          ignoreEncryption: true,
+        }); //ignoreEncr to read the metadata without crashing
+
+        if (pdfDoc.isEncrypted) {
+          throw new Error(
+            "This document is password protected. Please unlock it before uploading.",
+          );
         }
-      }catch (err){
+      } catch (err) {
         //catch error for encrypted or currupted file:
-        if (err instanceof Error && err.message.includes("password protected")){
+        if (
+          err instanceof Error &&
+          err.message.includes("password protected")
+        ) {
           throw err;
         }
-        throw new Error("Failed to read PDF file. It may be corrupted or in an unsupported format.");
+        throw new Error(
+          "Failed to read PDF file. It may be corrupted or in an unsupported format.",
+        );
       }
 
       const document = await upload(selectedFile, (actualProgress) => {
@@ -108,7 +117,7 @@ export function UploadModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-sm sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Upload PDF Document</DialogTitle>
           <DialogDescription>
@@ -151,17 +160,19 @@ export function UploadModal({
 
           {/* Selected File */}
           {selectedFile && !uploading && (
-            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-              <div className="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-lg">
-                <Icons.fileText className="w-5 h-5 text-rose-600 dark:text-rose-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                  {selectedFile.name}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
+            <div className="flex gap-1 p-2 justify-between bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-lg">
+                  <Icons.fileText className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white break-all">
+                    {selectedFile.name}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
               </div>
               <Button
                 variant="ghost"
