@@ -10,10 +10,7 @@ class DocumentWorker {
     }
 
     createRedisConnection() {
-        return new Redis(config.redis.url, {
-            maxRetriesPerRequest: null,
-            tls: { rejectUnauthorized: false }
-        });
+        return new Redis(config.redis.url, config.redis.options);
     }
 
     /**

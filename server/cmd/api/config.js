@@ -53,6 +53,10 @@ const config = {
   // Redis (Unstash)
   redis: {
     url: getEnvVar(null, "REDIS_URL"),
+    options: {
+      maxRetriesPerRequest: null,
+      // tls: { rejectUnauthorized: false }, //This is needed if you I use Upstash as provider (becuase of residss (extra s))
+    },
   },
 
   // AI / Vector (Gemini)
@@ -75,7 +79,8 @@ const config = {
       10,
     ),
     maxUploadRequests: parseInt(
-      process.env.LIMITER_MAX_UPLOAD_REQUESTS || defaults.limiter.maxUploadRequests,
+      process.env.LIMITER_MAX_UPLOAD_REQUESTS ||
+        defaults.limiter.maxUploadRequests,
       10,
     ),
     enabled: (values.limiter || process.env.LIMITER_ENABLED) !== "false",

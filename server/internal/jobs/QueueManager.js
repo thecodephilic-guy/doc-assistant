@@ -16,10 +16,7 @@ class QueueManager {
      * BullMQ requires maxRetriesPerRequest to be null.
      */
     createRedisConnection() {
-        return new Redis(config.redis.url, {
-            maxRetriesPerRequest: null,
-            tls: { rejectUnauthorized: false }
-        });
+        return new Redis(config.redis.url, config.redis.options);
     }
 
     /**
