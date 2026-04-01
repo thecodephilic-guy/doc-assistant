@@ -1,4 +1,13 @@
-const { eq, sql, and, asc, desc, cosineDistance, gt, count } = require("drizzle-orm");
+const {
+  eq,
+  sql,
+  and,
+  asc,
+  desc,
+  cosineDistance,
+  gt,
+  count,
+} = require("drizzle-orm");
 const db = require("./db");
 const { documents, embeddings } = require("./schema");
 
@@ -37,6 +46,18 @@ class DocumentModel {
       .where(and(eq(documents.id, docId), eq(documents.userId, userId)));
 
     return result[0] || null;
+  }
+
+  /**
+   * Fetches the status of the pdf
+   */
+  async getStatus(id, userId) {
+    const [result] = await db
+      .select({ id: id, status: documents.status })
+      .from(documents)
+      .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      return result;
   }
 
   /**

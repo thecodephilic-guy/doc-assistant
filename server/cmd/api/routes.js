@@ -7,6 +7,7 @@ const {
     listDocumentsHandler,
     getDocumentHandler,
     deleteDocumentHandler,
+    getDocumentStatusHandler,
 } = require('./documents');
 const {
     createChatHandler,
@@ -28,6 +29,7 @@ router.get("/healthcheck", healthcheckHandler);
 router.post("/documents/upload", requireAuth, uploadRateLimiter, upload.single('document'), uploadDocumentHandler);
 router.get("/documents", requireAuth, listDocumentsHandler);
 router.get("/documents/:id", requireAuth, getDocumentHandler);
+router.get("/documents/:id/status", requireAuth, getDocumentStatusHandler);
 router.delete("/documents/:id", requireAuth, deleteDocumentHandler);
 
 // Chats

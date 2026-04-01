@@ -198,6 +198,39 @@ const getDocumentHandler = async (req, res) => {
   }
 };
 
+const getDocumentStatusHandler = async (req, res ) => {
+  try{
+    const userId = req.userId;
+    const docId = parseInt(req.params.id, 10);
+
+    const validator = new Validator();
+
+    validator.check(
+      !Number.isNaN(docId) && docId > 0,
+      "id",
+      "must be a valid positive integer",
+    );
+
+    if (!validator.valid()) {
+      return failedValidationResponse(res, validator.errors);
+    }
+
+    const doc = await documentModel.getStatus(docId, userId);
+        if (!doc) {
+      return notFoundResponse(res, "document not found");
+    }
+
+    const response = {
+      status: doc.status === "indexed" ? "ready" : doc.status
+    }
+
+    sendSuccessResponse(res, StatusCodes.OK, response);
+  }catch (err) {
+    console.error("[Documents] Get error:", err);
+    serverErrorResponse(res);
+  }
+}
+
 /**
  * DELETE /v1/documents/:id
  * Deletes a document for the authenticated user (cascades to embeddings).
@@ -235,9 +268,12 @@ const deleteDocumentHandler = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   uploadDocumentHandler,
   listDocumentsHandler,
   getDocumentHandler,
+  getDocumentStatusHandler,
   deleteDocumentHandler,
 };
