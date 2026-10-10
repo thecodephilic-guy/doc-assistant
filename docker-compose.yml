@@ -1,8 +1,6 @@
 services:
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: ghcr.io/thecodephilic-guy/doc-assistant-server:latest
     container_name: doc-assistant-server
     restart: unless-stopped
     ports:
