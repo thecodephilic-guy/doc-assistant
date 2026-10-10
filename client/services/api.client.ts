@@ -23,18 +23,36 @@ export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001",
 });
 
+// Helper to safely get the token, waiting if Clerk is still initializing
+const getClerkToken = async (): Promise<string | null> => {
+  if (typeof window === "undefined") return null;
+
+  // 1. If Clerk session is already available, get token immediately
+  if (window.Clerk?.session) {
+    return await window.Clerk.session.getToken();
+  }
+
+  // 2. If Clerk is still loading, wait up to 3 seconds for session initialization
+  for (let i = 0; i < 30; i++) {
+    await new Promise((r) => setTimeout(r, 100));
+    if (window.Clerk?.session) {
+      return await window.Clerk.session.getToken();
+    }
+  }
+
+  return null;
+};
+
 // Inject Auth Token
 apiClient.interceptors.request.use(
   async (config) => {
-    if (typeof window !== "undefined" && window.Clerk?.session) {
-      try {
-        const token = await window.Clerk.session.getToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-      } catch (error) {
-        console.error("Failed to fetch Clerk token:", error);
+    try {
+      const token = await getClerkToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
+    } catch (error) {
+      console.error("Failed to attach Clerk token:", error);
     }
     return config;
   },

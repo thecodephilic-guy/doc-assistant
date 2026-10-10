@@ -15,7 +15,6 @@ const baseLimiter = rateLimit({
   limit: config.limiter.maxRequests,
   standardHeaders: true,
   legacyHeaders: false,
-  ipv6Subnet: 56,
   keyGenerator: (req) => ipKeyGenerator(getClientIp(req), 56),
   handler: (req, res, next) => rateLimitExceededResponse(res),
 });
@@ -25,7 +24,6 @@ const uploadLimiter = rateLimit({
   limit: config.limiter.maxUploadRequests,
   standardHeaders: true,
   legacyHeaders: false,
-  ipv6Subnet: 56,
   keyGenerator: (req) => ipKeyGenerator(getClientIp(req), 56),
   handler: (req, res, next) => rateLimitExceededResponse(res),
 });
@@ -34,9 +32,12 @@ const uploadLimiter = rateLimit({
  * Authentication middleware using Clerk.
  */
 const requireAuth = async (req, res, next) => {
-  const { isAuthenticated, userId } = getAuth(req);
+  const auth = getAuth(req);
 
-  if (!isAuthenticated || !userId) {
+  if (!auth.isAuthenticated || !auth.userId) {
+    const hasAuthHeader = Boolean(req.headers.authorization);
+    console.warn(`[AUTH 401] ${req.method} ${req.originalUrl} | AuthHeader: ${hasAuthHeader ? "PRESENT" : "MISSING"} | ClerkStatus: ${auth.sessionStatus || "signed-out"} | Reason: ${req.headers["x-clerk-auth-reason"] || "none"}`);
+    
     return res.status(401).json({
       success: false,
       error: {
@@ -47,7 +48,7 @@ const requireAuth = async (req, res, next) => {
   }
 
   // Attach userId to request for downstream handlers
-  req.userId = userId;
+  req.userId = auth.userId;
   next();
 };
 

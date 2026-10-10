@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import type { Document } from "../lib/types";
 import { DocumentService } from "@/services/api.document";
+import { useAuth } from "@clerk/nextjs";
 
 export function useDocuments() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isLoaded, isSignedIn } = useAuth();
 
   const fetchDocuments = async () => {
     try {
@@ -24,8 +26,12 @@ export function useDocuments() {
   };
 
   useEffect(() => {
-    fetchDocuments();
-  }, []);
+    if (isLoaded && isSignedIn) {
+      fetchDocuments();
+    } else if (isLoaded && !isSignedIn) {
+      setLoading(false);
+    }
+  }, [isLoaded, isSignedIn]);
 
   const upload = async (file: File, onProgress?: (progress: number) => void): Promise<Document> => {
     try {
