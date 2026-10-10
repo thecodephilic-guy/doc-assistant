@@ -1,5 +1,6 @@
 services:
   server:
+    image: ghcr.io/thecodephilic-guy/doc-assistant-server:latest
     build:
       context: ./server
       dockerfile: Dockerfile

@@ -1,5 +1,5 @@
 # Production Dockerfile for doc-assistant-server
-FROM node:20-bookworm-slim
+FROM node:20-alpine
 
 # Set environment
 ENV NODE_ENV=production \
@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy dependency manifests first to leverage Docker layer caching
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --omit=dev
+# Install production dependencies only with fast network flags
+RUN npm ci --omit=dev --no-audit --no-fund
 
 # Copy application source code
 COPY . .
