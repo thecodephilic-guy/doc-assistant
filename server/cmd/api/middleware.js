@@ -1,7 +1,14 @@
 const { getAuth } = require("@clerk/express");
 const config = require("./config");
-const { rateLimit } = require("express-rate-limit");
+const { rateLimit, ipKeyGenerator } = require("express-rate-limit");
 const { rateLimitExceededResponse } = require("./errors");
+
+// Helper to reliably extract the client's public IP:
+// Behind Cloudflare Tunnel, CF-Connecting-IP is populated at the edge and cannot be spoofed.
+// Falls back to req.ip for direct/Tailscale network calls.
+const getClientIp = (req) => {
+  return req.headers["cf-connecting-ip"] || req.ip || "127.0.0.1";
+};
 
 const baseLimiter = rateLimit({
   windowMs: config.limiter.windowMs,
@@ -9,6 +16,7 @@ const baseLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   ipv6Subnet: 56,
+  keyGenerator: (req) => ipKeyGenerator(getClientIp(req), 56),
   handler: (req, res, next) => rateLimitExceededResponse(res),
 });
 
@@ -18,6 +26,7 @@ const uploadLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   ipv6Subnet: 56,
+  keyGenerator: (req) => ipKeyGenerator(getClientIp(req), 56),
   handler: (req, res, next) => rateLimitExceededResponse(res),
 });
 

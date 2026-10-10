@@ -4,7 +4,7 @@ const path = require("path");
 
 // 1. Define Defaults
 const defaults = {
-  port: 8080,
+  port: 4001,
   env: "development",
   version: "1.0.0",
   limiter: {

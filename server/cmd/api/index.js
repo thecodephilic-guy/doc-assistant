@@ -19,7 +19,7 @@ app.use(globalRateLimiter);
 app.use(cors());
 app.use(clerkMiddleware());
 // Serve static files (using the safe absolute path from config)
-// Access files at: http://localhost:8080/uploads/file.pdf
+// Access files at: http://localhost:4001/uploads/file.pdf
 app.use("/uploads", express.static(config.uploadDir));
 
 // --- Routes ---

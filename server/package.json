@@ -16,7 +16,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
 
     "// --- DEVELOPMENT ---": "",
-    "dev": "nodemon ./cmd/api/index.js --env=development --port=8080",
+    "dev": "nodemon ./cmd/api/index.js --env=development --port=4001",
     "start": "node ./cmd/api/index.js",
 
     "// --- PRODUCTION CONNECTION ---": "",
@@ -28,8 +28,8 @@
 
     "// --- DEPLOYMENT SCRIPTS ---": "",
     "deploy:api": "npm run deploy:sync && npm run deploy:install && npm run deploy:restart",
-    "deploy:sync": "rsync -rP --delete --exclude='node_modules' --exclude='.env' --exclude='.git' --exclude='uploads' ./ docassistant-prod:/var/www/doc-assistant",
-    "deploy:install": "ssh -t docassistant-prod 'cd /var/www/doc-assistant && npm install --omit=dev'",
+    "deploy:sync": "rsync -rP --delete --rsync-path=\"sudo rsync\" --exclude='node_modules' --exclude='.env' --exclude='.git' --exclude='uploads' ./ docassistant-prod:/var/www/doc-assistant",
+    "deploy:install": "ssh -t docassistant-prod 'cd /var/www/doc-assistant && sudo npm install --omit=dev && sudo chown -R docassistant:docassistant /var/www/doc-assistant'",
     "deploy:restart": "ssh -t docassistant-prod 'sudo systemctl restart doc-assistant'",
     
     "// --- CONFIGURE INFRASTRUCTURE ---": "",

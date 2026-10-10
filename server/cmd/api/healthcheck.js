@@ -5,7 +5,7 @@ const healthcheckHandler = (req, res) => {
   sendSuccessResponse(res, 200, {
     status: "available",
     system_info: {
-      environment: "development",
+      environment: appConfig.env,
       version: appConfig.version,
     },
   });

@@ -20,7 +20,7 @@ export class ApiError extends Error {
 }
 
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001",
 });
 
 // Inject Auth Token

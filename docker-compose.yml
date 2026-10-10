@@ -1,0 +1,62 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: doc-assistant-server
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-4001}:4001"
+    environment:
+      - NODE_ENV=production
+      - PORT=4001
+      - DATABASE_URL=${DATABASE_URL}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - CLERK_PUBLISHABLE_KEY=${CLERK_PUBLISHABLE_KEY}
+      - CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+      - REDIS_URL=${REDIS_URL:-redis://:${REDIS_PASSWORD:-redispassword}@redis:6379}
+      - LIMITER_WINDOW_MS=${LIMITER_WINDOW_MS:-60000}
+      - LIMITER_MAX_REQUESTS=${LIMITER_MAX_REQUESTS:-50}
+      - LIMITER_MAX_UPLOAD_REQUESTS=${LIMITER_MAX_UPLOAD_REQUESTS:-5}
+      - LIMITER_ENABLED=${LIMITER_ENABLED:-true}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-gemini-embedding-001}
+      - VECTOR_DIM=${VECTOR_DIM:-768}
+    volumes:
+      - doc_assistant_uploads:/app/uploads
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - doc_assistant_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: doc-assistant-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD:-redispassword}
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy noeviction
+    volumes:
+      - doc_assistant_redis_data:/data
+    networks:
+      - doc_assistant_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redispassword}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+
+volumes:
+  doc_assistant_uploads:
+    name: doc_assistant_uploads
+  doc_assistant_redis_data:
+    name: doc_assistant_redis_data
+
+networks:
+  doc_assistant_network:
+    name: doc_assistant_network
+    driver: bridge
